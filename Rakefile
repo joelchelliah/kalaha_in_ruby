@@ -1,5 +1,6 @@
 require 'rspec/core/rake_task'
 
-RSpec::Core::RakeTask.new do |t|
-  t.warning = true
+desc 'Run specs'
+RSpec::Core::RakeTask.new(:spec) do |t|
+  t.ruby_opts="-w"
  end
