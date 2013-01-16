@@ -1,4 +1,4 @@
-require_relative "board.rb"
+require "board.rb"
 
 class BasicOpponent
   def initialize

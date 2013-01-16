@@ -1,5 +1,5 @@
-require_relative "../lib/board.rb"
-require_relative "../lib/opponents.rb"
+require "board.rb"
+require "opponents.rb"
 
 def play
   seeds = set_num_seeds.to_i
