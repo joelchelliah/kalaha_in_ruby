@@ -1,27 +1,53 @@
 require_relative "board"
 require_relative "opponents"
 
+def menu
+  puts <<-HERE
+/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+                                    MAIN MENU
+
+/////////////////////////////////////////////////////////////////////////////////
+
+  HERE
+  commands
+end
+
+def commands
+  puts <<-HERE
+ Pick a command:
+
+    n = New Game
+    h = Help
+    q = Quit
+
+  HERE
+  print "Command: "
+  command = gets.chomp
+  case command
+  when /^(q|Q|quit|exit)$/
+    exit
+  when /^(n|N|New Game)$/
+    play
+  when /^(h|H|help|Help)$/
+    help
+    commands
+  else
+    puts "\n    What?! \n\n"
+    commands
+  end
+end
+
 def play
   seeds = set_num_seeds.to_i
   puts <<-HERE
+/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////
+         Starting a new game of Kalaha with #{seeds} seeds per house.
 
-Starting a new game of Kalaha with #{seeds} seeds per house.
-
-/////////////////////////////////////////////////////////////
-
-You control the houses on             |          :  4  5  6 |
-the right side. They are numbered:    |          :          | 7
-                                      |          : 10  9  8 |
-
-
-Your opponent controls the houses     | 1  2  3  :          |
-on the left side of the board:      0 |          :          |
-                                      | 13 12 11 :          |
-
-/////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
 
   HERE
   board = Board.new(seeds)
@@ -46,6 +72,54 @@ on the left side of the board:      0 |          :          |
   replay?()
 end
 
+def help
+  puts <<-HERE
+/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+                                      HELP
+
+/////////////////////////////////////////////////////////////////////////////////
+
+                               This is the board:
+
+                . 1.    . 2.    . 3.        . 4.    . 5.    . 6.
+   _.======================================================================._
+ //         |   ----    ----    ----   ::   ----    ----    ----   |         \\\\
+||          |  |    |  |    |  |    |  ::  |    |  |    |  |    |  |          ||
+||   ----   |   ----    ----    ----   ::   ----    ----    ----   |   ----   ||
+||  |    |  |                          ::                          |  |    |  ||
+||  |    |  |                          ::                          |  |    |  ||
+||  |    |  |                          ::                          |  |    |  ||
+||   ----   |   ----    ----    ----   ::   ----    ----    ----   |   ----   ||
+||          |  |    |  |    |  |    |  ::  |    |  |    |  |    |  |          ||
+'|          |   ----    ----    ----   ::   ----    ----    ----   |          |'
+  *-~======================================================================-~*
+                '13'     '12'    '11'        .10.    . 9.    . 8.
+
+/////////////////////////////////////////////////////////////////////////////////
+
+ You control the houses on the right side     /  |          :  4  5  6 |  \\
+ of the board. They are numbered:            |   |          :          | 7 |
+                                              \\  |          : 10  9  8 |  /
+
+
+ Your opponent controls the houses            /  | 1  2  3  :          |  \\
+ on the left side of the board:              | 0 |          :          |   |
+                                              \\  | 13 12 11 :          |  /
+
+/////////////////////////////////////////////////////////////////////////////////
+
+ Start sowing seeds from your side of the board by specifying the number of
+ the house you wish to take seeds from, e.g. House: 4
+
+ Rules on playing the game can be found here:
+ http://en.wikipedia.org/wiki/Kalah#Rules
+
+/////////////////////////////////////////////////////////////////////////////////
+
+  HERE
+end
 def set_num_seeds
   print " * Specify number of seeds per house (4-6): "
   num_seeds = gets.chomp
@@ -60,7 +134,7 @@ def set_num_seeds
 end
 
 def player_turn(board)
-  puts "\nIt's your turn. Pick a house to start from:"
+  puts "It's your turn. Pick a house to start sowing from:"
   begin
     result = nil
     while result.nil?
@@ -77,9 +151,9 @@ def player_turn(board)
         end
       end
     end
-    puts "\nYou plant seeds from house #{house}:"
+    puts "You plant seeds from house #{house}:"
     board.show
-    puts "\nLast seed landed in store. You get another turn." if result == :again
+    puts "Last seed landed in store. You get another turn." if result == :again
   end while result == :again
   result
 end
@@ -89,10 +163,10 @@ def opponent_turn(op, board)
     board = board.flip
     house = op.pick_house_from board.seeds_in_houses
     result = board.sow_seeds_from house
-    puts "\nOpponent plants seeds from house #{(house + 7) % 14}:"
+    puts "Opponent plants seeds from house #{(house + 7) % 14}:"
     board = board.flip
     board.show
-    puts "\nLast seed landed in store. Opponent gets another turn." if result == :again
+    puts "Last seed landed in store. Opponent gets another turn." if result == :again
   end while result == :again
   return board, result
 end
@@ -117,4 +191,4 @@ def replay?
   end
 end
 
-play
+menu
